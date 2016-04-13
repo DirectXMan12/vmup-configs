@@ -1,0 +1,24 @@
+# share the main directory into the VM in read-only mode
+--share ../:/atomic
+
+# inject the origin CLI helper script and symlinks
+--add-file ./openshift-cli:/root/openshift-cli:0755
+--add-file SYM:/root/openshift-cli:/root/oc:0755
+--add-file SYM:/root/openshift-cli:/root/oadm:0755
+
+# inject the script to launch origin
+--add-file ./run-origin:/root/run-origin:0755
+
+# add in the necessary packages
+--add-packages docker ethtool openvswitch
+
+# set up the necessary scripts for openshift-sdn
+--add-file SYM:/atomic/openshift-sdn/plugins/osdn/ovs/bin/openshift-sdn-ovs:/usr/bin/openshift-sdn-ovs:0755
+--add-file SYM:/atomic/openshift-sdn/plugins/osdn/ovs/bin/openshift-sdn-docker-setup.sh:/usr/bin/openshift-sdn-docker-setup.sh:0755
+--add-file ./docker-sdn-ovs.conf:/usr/lib/systemd/system/docker.service.d/docker-sdn-ovs.conf
+
+# set up some useful alias
+--run-cmd "echo 'alias oc=/root/oc' >> /root/.bashrc"
+--run-cmd "echo 'alias oadm=/root/oadm' >> /root/.bashrc"
+
+# NB: in order to use the SDN plugins, you just need to switch them on in the node config

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+CMD=$(basename $0)
+
+export KUBECONFIG=${KUBECONFIG:-/origin.config/master/admin.kubeconfig}
+export CURL_CA_BUNDLE=${CURL_CA_BUNDLE:-/origin.config/master/ca.crt}
+
+export PATH="/atomic/origin/_output/local/bin/linux/amd64/:${PATH}"
+exec ${CMD} "$@"
