@@ -1,5 +1,5 @@
 # share the main directory into the VM in read-only mode
---share ../:/atomic
+--share ../../:/atomic
 
 # inject the origin CLI helper script and symlinks
 --add-file ./openshift-cli:/root/openshift-cli:0755
