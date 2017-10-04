@@ -1,38 +1,44 @@
 #!/bin/bash
 set -e
 
-export PATH="/atomic/origin/_output/local/bin/linux/amd64/:${PATH}"
+PROJ=${OPENSHIFT_VARIANT:-origin}
+
+export PATH="/atomic/${PROJ}/_output/local/bin/linux/amd64/:${PATH}"
 
 case "$1" in
     help )
         echo "run-origin [api|controllers|master|node|write-config|all] [OPTIONS...]"
         echo ""
         echo "    Running with no command is equivalent to 'all'."
-        echo "    This will configure origin to use /origin.config, /origin.etcd, and /origin.volumes "
+        echo "    This will configure origin to use /${PROJ}.config, /${PROJ}.etcd, and /${PROJ}.volumes "
         echo "    for configuration, etcd storage, and volumes, respectively."
-        echo "    Running 'all' will automatically invoke 'write-config' if /origin.config is missing."
+        echo "    Running 'all' will automatically invoke 'write-config' if /${PROJ}.config is missing."
         exit 0
         ;;
     api )
         shift
-        exec openshift start master api --config=/origin.config/master/master-config.yaml "$@"
+        exec openshift start master api --config=/${PROJ}.config/master/master-config.yaml "$@"
         ;;
     controllers )
         shift
-        exec openshift start master controllers --config=/origin.config/master/master-config.yaml "$@"
+        exec openshift start master controllers --config=/${PROJ}.config/master/master-config.yaml "$@"
         ;;
     master )
         shift
-        exec openshift start master --config=/origin.config/master/master-config.yaml "$@"
+        exec openshift start master --config=/${PROJ}.config/master/master-config.yaml "$@"
+        ;;
+    etcd )
+        shift
+        exec openshift start etcd --config=/${PROJ}.config/master/master-config.yaml "$@"
         ;;
     node )
         shift
         systemctl start openvswitch
-        exec openshift start node --config=/origin.config/node-$(hostname -f)/node-config.yaml "$@"
+        exec openshift start node --config=/${PROJ}.config/node-$(hostname -f)/node-config.yaml "$@"
         ;;
     write-config )
         shift
-        openshift start --write-config=/origin.config --etcd-dir=/origin.etcd --volume-dir=/origin.volumes "$@"
+        openshift start --write-config=/${PROJ}.config --etcd-dir=/${PROJ}.etcd --volume-dir=/${PROJ}.volumes "$@"
         exit $res
         ;;
     all )
@@ -40,11 +46,12 @@ case "$1" in
         ;&
     * )
         # write config if this is the first time
-        if [[ ! -e /origin.config ]]; then
-            openshift start --write-config=/origin.config --etcd-dir=/origin.etcd --volume-dir=/origin.volumes "$@"
+        if [[ ! -e /${PROJ}.config ]]; then
+            openshift start --write-config=/${PROJ}.config --etcd-dir=/${PROJ}.etcd --volume-dir=/${PROJ}.volumes "$@"
         fi
 
         systemctl start openvswitch
-        exec openshift start --master-config=/origin.config/master/master-config.yaml --node-config=/origin.config/node-$(hostname -f)/node-config.yaml "$@"
+        exec openshift start --master-config=/${PROJ}.config/master/master-config.yaml --node-config=/${PROJ}.config/node-192.168.230.61/node-config.yaml "$@"
         ;;
 esac
+

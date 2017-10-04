@@ -1,9 +1,11 @@
 #!/bin/bash
 
+PROJ=${OPENSHIFT_VARIANT:-origin}
+BINARY_PROJ=${OPENSHIFT_BINARY_VARIANT:-$PROJ}
 CMD=$(basename $0)
 
-export KUBECONFIG=${KUBECONFIG:-/origin.config/master/admin.kubeconfig}
-export CURL_CA_BUNDLE=${CURL_CA_BUNDLE:-/origin.config/master/ca.crt}
+export KUBECONFIG=${KUBECONFIG:-/${PROJ}.config/master/admin.kubeconfig}
+export CURL_CA_BUNDLE=${CURL_CA_BUNDLE:-/${PROJ}.config/master/ca.crt}
 
-export PATH="/atomic/origin/_output/local/bin/linux/amd64/:${PATH}"
+export PATH="/atomic/${BINARY_PROJ}/_output/local/bin/linux/amd64/:${PATH}"
 exec ${CMD} "$@"

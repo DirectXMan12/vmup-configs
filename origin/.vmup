@@ -13,9 +13,9 @@
 --add-packages docker ethtool openvswitch
 
 # set up the necessary scripts for openshift-sdn
---add-file SYM:/atomic/openshift-sdn/plugins/osdn/ovs/bin/openshift-sdn-ovs:/usr/bin/openshift-sdn-ovs:0755
---add-file SYM:/atomic/openshift-sdn/plugins/osdn/ovs/bin/openshift-sdn-docker-setup.sh:/usr/bin/openshift-sdn-docker-setup.sh:0755
---add-file ./docker-sdn-ovs.conf:/usr/lib/systemd/system/docker.service.d/docker-sdn-ovs.conf
+--add-file SYM:/opt/cni/bin/openshift-sdn:/atomic/origin/_output/local/bin/linux/amd64/sdn-cni-plugin:0755
+--add-file SYM:/opt/cni/bin/host-local:/atomic/origin/_output/local/bin/linux/amd64/host-local:0755
+--add-file SYM:/opt/cni/bin/loopback:/atomic/origin/_output/local/bin/linux/amd64/loopback:0755
 
 # set up some useful alias
 --run-cmd "echo 'alias oc=/root/oc' >> /root/.bashrc"
