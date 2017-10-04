@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: heapster-certs
+  labels:
+    metrics-infra: heapster
+    name: heapster
+  name: heapster
+  namespace: openshift-infra
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: http-endpoint
+  selector:
+    name: heapster
